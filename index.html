@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LapTwin — two laps, one tab, files stay here</title>
+    <meta
+      name="description"
+      content="Drop two karting GPS or telemetry files. Compare the tracks. Nothing is uploaded."
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --bg: #fafaf9;
+        --card: #ffffff;
+        --a: #0f766e;
+        --b: #9a3412;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      main { max-width: 44rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+      h1 { font-size: 2rem; letter-spacing: -0.03em; margin: 0 0 0.75rem; }
+      h2 { font-size: 1.05rem; margin: 2rem 0 0.5rem; }
+      .kicker { color: var(--muted); font-size: 0.875rem; font-weight: 600; margin: 0 0 0.75rem; }
+      .lede { color: var(--muted); font-size: 1.125rem; max-width: 36rem; }
+      .drops { display: grid; gap: 0.75rem; grid-template-columns: 1fr 1fr; }
+      .drop {
+        border: 1px dashed #d6d3d1;
+        border-radius: 1rem;
+        background: var(--card);
+        padding: 1.25rem;
+        text-align: center;
+      }
+      .drop.over { border-color: var(--a); background: #f0fdfa; }
+      button {
+        appearance: none;
+        border: 0;
+        background: var(--ink);
+        color: white;
+        border-radius: 0.6rem;
+        padding: 0.5rem 0.85rem;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .meta { color: var(--muted); font-size: 0.8rem; }
+      svg { width: 100%; height: 18rem; background: var(--card); border: 1px solid var(--line); border-radius: 0.85rem; }
+      .cards { display: grid; gap: 0.75rem; grid-template-columns: 1fr; }
+      @media (min-width: 640px) { .cards { grid-template-columns: 1fr 1fr 1fr; } }
+      .cards article {
+        border: 1px solid var(--line);
+        border-radius: 0.9rem;
+        padding: 1rem;
+        background: var(--card);
+      }
+      .cards h2 { font-size: 1rem; margin: 0 0 0.4rem; }
+      .cards p { margin: 0; color: var(--muted); font-size: 0.875rem; }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      a { color: inherit; }
+      .warn { color: var(--b); font-size: 0.875rem; }
+      input[type="file"] { display: none; }
+      .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 1rem 0; }
+      .stats div { border: 1px solid var(--line); border-radius: 0.75rem; padding: 0.7rem; background: var(--card); }
+      .a { color: var(--a); } .b { color: var(--b); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="kicker">LapTwin</p>
+      <h1>You already said the problem out loud.</h1>
+      <p class="lede">
+        “I’m looking for a simple tool that lets you compare two karting laps
+        side by side, synced with telemetry. Ideally, it could use GPS.” Drop two
+        files. Overlay the tracks. Nothing is uploaded.
+      </p>
+
+      <div class="drops">
+        <div class="drop" id="drop-a">
+          <p><strong class="a">Lap A</strong></p>
+          <p class="meta" id="meta-a">CSV or GPX</p>
+          <button type="button" id="pick-a">Choose</button>
+          <input id="file-a" type="file" accept=".csv,.gpx,.txt,text/csv,application/gpx+xml" />
+        </div>
+        <div class="drop" id="drop-b">
+          <p><strong class="b">Lap B</strong></p>
+          <p class="meta" id="meta-b">CSV or GPX</p>
+          <button type="button" id="pick-b">Choose</button>
+          <input id="file-b" type="file" accept=".csv,.gpx,.txt,text/csv,application/gpx+xml" />
+        </div>
+      </div>
+
+      <p class="meta" id="status">Waiting for two laps.</p>
+      <p class="warn" id="error" hidden></p>
+      <div class="stats" id="stats" hidden>
+        <div><b class="a" id="s-a">—</b><span class="meta"> lap A distance</span></div>
+        <div><b class="b" id="s-b">—</b><span class="meta"> lap B distance</span></div>
+      </div>
+      <svg id="plot" viewBox="0 0 640 288" hidden></svg>
+      <p class="meta" id="legend" hidden><span class="a">teal A</span> · <span class="b">rust B</span></p>
+
+      <section class="cards" style="margin-top: 2.5rem;">
+        <article>
+          <h2>The declaration is the qualifier</h2>
+          <p>If you already export GPS or RaceRender CSV and compare laps in your head, you already know you need this.</p>
+        </article>
+        <article>
+          <h2>The overlay is the product</h2>
+          <p>Lat/lon tracks, distance, optional speed if the file has it. No GoPro mux in this tab.</p>
+        </article>
+        <article>
+          <h2>Built for the reply</h2>
+          <p>Someone posted the pain. This page is the answer. Try it in this tab, then send the URL back.</p>
+        </article>
+      </section>
+
+      <section>
+        <h2>Who this is for</h2>
+        <ul class="meta">
+          <li>Two laps as GPX from a phone</li>
+          <li>A karting app CSV with lat, lon, speed</li>
+          <li>A session you want to eyeball before buying RaceRender</li>
+        </ul>
+        <p class="warn">8 MB each. Video sync is out of scope. Telemetry only.</p>
+      </section>
+
+      <footer>
+        <a href="https://github.com/davidlifschitz/gtm-laptwin">Source</a>
+        · Ask:
+        <a href="https://www.reddit.com/r/Karting/comments/1vn5guj/has_anyone_vibecoded_a_karting_lap_comparison/">r/Karting lap compare</a>
+        · 8 MB. No account. No cloud copy.
+      </footer>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
