@@ -16,6 +16,8 @@ const els = {
   sb: document.getElementById("s-b"),
   plot: document.getElementById("plot"),
   legend: document.getElementById("legend"),
+  va: document.getElementById("v-a"),
+  vb: document.getElementById("v-b"),
 };
 
 let lapA = null;
@@ -107,6 +109,21 @@ function pathD(pts, box) {
     .join(" ");
 }
 
+function speedText(pts) {
+  let top = -Infinity;
+  let sum = 0;
+  let n = 0;
+  for (const p of pts) {
+    if (p.speed == null) continue;
+    if (p.speed > top) top = p.speed;
+    sum += p.speed;
+    n++;
+  }
+  if (!n) return pts.length ? "no speed column" : "";
+  const r = (v) => (Math.round(v * 10) / 10).toString();
+  return `top ${r(top)} · avg ${r(sum / n)}`;
+}
+
 function fmtM(m) {
   if (m >= 1000) return (m / 1000).toFixed(2) + " km";
   return Math.round(m) + " m";
@@ -140,6 +157,8 @@ function draw() {
   els.stats.hidden = false;
   els.sa.textContent = a.length ? fmtM(distance(a)) : "—";
   els.sb.textContent = b.length ? fmtM(distance(b)) : "—";
+  els.va.textContent = speedText(a);
+  els.vb.textContent = speedText(b);
   els.status.textContent = `${a.length} pts A · ${b.length} pts B · files stayed in this tab`;
 }
 
