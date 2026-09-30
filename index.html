@@ -94,23 +94,23 @@
           <p><strong class="a">Lap A</strong></p>
           <p class="meta" id="meta-a">CSV or GPX</p>
           <button type="button" id="pick-a">Choose</button>
-          <input id="file-a" type="file" accept=".csv,.gpx,.txt,text/csv,application/gpx+xml" />
+          <input id="file-a" type="file" aria-label="Lap A file" accept=".csv,.gpx,.txt,text/csv,application/gpx+xml" />
         </div>
         <div class="drop" id="drop-b">
           <p><strong class="b">Lap B</strong></p>
           <p class="meta" id="meta-b">CSV or GPX</p>
           <button type="button" id="pick-b">Choose</button>
-          <input id="file-b" type="file" accept=".csv,.gpx,.txt,text/csv,application/gpx+xml" />
+          <input id="file-b" type="file" aria-label="Lap B file" accept=".csv,.gpx,.txt,text/csv,application/gpx+xml" />
         </div>
       </div>
 
-      <p class="meta" id="status">Waiting for two laps.</p>
-      <p class="warn" id="error" hidden></p>
+      <p class="meta" id="status" role="status">Waiting for two laps.</p>
+      <p class="warn" id="error" role="alert" hidden></p>
       <div class="stats" id="stats" hidden>
         <div><b class="a" id="s-a">—</b><span class="meta"> lap A distance</span><div class="meta" id="v-a"></div></div>
         <div><b class="b" id="s-b">—</b><span class="meta"> lap B distance</span><div class="meta" id="v-b"></div></div>
       </div>
-      <svg id="plot" viewBox="0 0 640 288" hidden></svg>
+      <svg id="plot" role="img" aria-label="Lap A and lap B tracks overlaid" viewBox="0 0 640 288" hidden></svg>
       <p class="meta" id="legend" hidden><span class="a">teal A</span> · <span class="b">rust B</span></p>
 
       <section class="cards" style="margin-top: 2.5rem;">
