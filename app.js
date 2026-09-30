@@ -48,19 +48,21 @@ function distance(pts) {
 function parseCsv(text) {
   const lines = text.replace(/^\uFEFF/, "").trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-  const headers = lines[0].split(",").map((h) => h.trim().toLowerCase().replace(/['"]/g, ""));
+  const sep = lines[0].split(";").length > lines[0].split(",").length ? ";" : ",";
+  const num = (v) => Number(sep === ";" ? String(v).trim().replace(",", ".") : v);
+  const headers = lines[0].split(sep).map((h) => h.trim().toLowerCase().replace(/['"]/g, ""));
   const latI = headers.findIndex((h) => /^(lat|latitude|gps_lat)$/.test(h));
   const lonI = headers.findIndex((h) => /^(lon|lng|long|longitude|gps_lon)$/.test(h));
   const spdI = headers.findIndex((h) => /^(speed|spd|velocity|kph|mph)$/.test(h));
   if (latI < 0 || lonI < 0) return [];
   const pts = [];
   for (const line of lines.slice(1)) {
-    const cols = line.split(",");
-    const lat = Number(cols[latI]);
-    const lon = Number(cols[lonI]);
+    const cols = line.split(sep);
+    const lat = num(cols[latI]);
+    const lon = num(cols[lonI]);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
     if (Math.abs(lat) > 90 || Math.abs(lon) > 180) continue;
-    const speed = spdI >= 0 ? Number(cols[spdI]) : null;
+    const speed = spdI >= 0 ? num(cols[spdI]) : null;
     pts.push({ lat, lon, speed: Number.isFinite(speed) ? speed : null });
   }
   return pts;
