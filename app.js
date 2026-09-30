@@ -123,12 +123,13 @@ function draw() {
     els.status.textContent = "Waiting for two laps with lat/lon.";
     return;
   }
-  const box = {
-    minLat: Math.min(...all.map((p) => p.lat)),
-    maxLat: Math.max(...all.map((p) => p.lat)),
-    minLon: Math.min(...all.map((p) => p.lon)),
-    maxLon: Math.max(...all.map((p) => p.lon)),
-  };
+  const box = { minLat: Infinity, maxLat: -Infinity, minLon: Infinity, maxLon: -Infinity };
+  for (const p of all) {
+    if (p.lat < box.minLat) box.minLat = p.lat;
+    if (p.lat > box.maxLat) box.maxLat = p.lat;
+    if (p.lon < box.minLon) box.minLon = p.lon;
+    if (p.lon > box.maxLon) box.maxLon = p.lon;
+  }
   const da = a.length ? pathD(a, box) : "";
   const db = b.length ? pathD(b, box) : "";
   els.plot.innerHTML =
